@@ -90,9 +90,6 @@ DEB_DH_SYSTEMD_START_ARGS_gdm3 := --no-act
 INFILES := $(wildcard debian/*.desktop.in)
 OUTFILES := $(INFILES:.desktop.in=.desktop)
 
-%.desktop: %.desktop.in
-	intltool-merge -d debian/po-up $< $@
-
 build/gdm3:: $(OUTFILES)
 
 MANPAGES := $(patsubst %.pod,%,$(wildcard debian/*.pod))
