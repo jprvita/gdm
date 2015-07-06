@@ -853,6 +853,8 @@ gdm_server_stop (GdmServer *server)
 {
         int res;
 
+        g_debug ("JPRVITA: gdm_server_stop()");
+
         if (server->priv->pid <= 1) {
                 return TRUE;
         }
@@ -1110,6 +1112,8 @@ static void
 gdm_server_finalize (GObject *object)
 {
         GdmServer *server;
+
+        g_debug ("JPRVITA: gdm_server_finalize()");
 
         g_return_if_fail (object != NULL);
         g_return_if_fail (GDM_IS_SERVER (object));

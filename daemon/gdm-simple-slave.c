@@ -1460,7 +1460,6 @@ on_accountsservice_ready (GObject       *object,
         g_dbus_proxy_call (slave->priv->accountsservice_proxy, "ListCachedUsers", NULL, 0, -1, NULL,
                            on_list_cached_users_complete, slave);
 }
-                          
 
 static gboolean
 gdm_simple_slave_run (GdmSimpleSlave *slave)
@@ -1515,7 +1514,6 @@ gdm_simple_slave_run (GdmSimpleSlave *slave)
                                           "org.freedesktop.Accounts",
                                           NULL,
                                           on_accountsservice_ready, slave);
-                
 #ifdef WITH_PLYMOUTH
                 slave->priv->plymouth_is_running = plymouth_is_running ();
 
@@ -1660,6 +1658,7 @@ gdm_simple_slave_stop (GdmSlave *slave)
 {
         GdmSimpleSlave *self = GDM_SIMPLE_SLAVE (slave);
 
+        g_debug ("JPRVITA: gdm_simple_slave_stop()");
         g_debug ("GdmSimpleSlave: Stopping simple_slave");
 
         GDM_SLAVE_CLASS (gdm_simple_slave_parent_class)->stop (slave);
