@@ -120,6 +120,8 @@ gdm_wait_on_and_disown_pid (int pid,
         int flags;
         gboolean already_reaped;
 
+        g_debug ("GdmCommon: about to waitpid () on pid %d with timeout %d (0 means forever)", pid, timeout);
+
         if (timeout > 0) {
                 flags = WNOHANG;
                 num_tries = 10 * timeout;
@@ -128,6 +130,7 @@ gdm_wait_on_and_disown_pid (int pid,
                 num_tries = 0;
         }
  wait_again:
+        g_debug ("GdmCommon: About to wait for pid %d with timeout %d (0 means indefinitely)", pid, timeout);
         errno = 0;
         already_reaped = FALSE;
         ret = waitpid (pid, &status, flags);

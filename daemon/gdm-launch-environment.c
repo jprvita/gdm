@@ -528,7 +528,9 @@ gdm_launch_environment_start (GdmLaunchEnvironment *launch_environment)
 gboolean
 gdm_launch_environment_stop (GdmLaunchEnvironment *launch_environment)
 {
+        g_critical ("GdmLaunchEnvironment: Stopping launch environment");
         if (launch_environment->priv->pid > 1) {
+                g_debug ("GdmLaunchEnvironmentStop: about to send SIGTERM to process group %d", -launch_environment->priv->pid);
                 gdm_signal_pid (-launch_environment->priv->pid, SIGTERM);
         }
 

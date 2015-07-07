@@ -54,6 +54,7 @@ static gboolean
 on_shutdown_signal_cb (gpointer user_data)
 {
         struct worker_data *wd = user_data;
+        g_debug ("session-worker-main: Got SIGTERM/SIGINT, quit the mainloop");
 
         if (wd->worker != NULL) {
                 g_object_unref (wd->worker);
@@ -137,7 +138,13 @@ main (int    argc,
         g_unix_signal_add (SIGINT, on_shutdown_signal_cb, &wd);
         g_unix_signal_add (SIGUSR1, on_sigusr1_cb, NULL);
 
+        g_debug ("session-worker-main: starting the mainloop");
         g_main_loop_run (wd.mainloop);
+        g_debug ("session-worker-main: mainloop exited -- unref'ing worker");
+
+        if (worker != NULL) {
+                g_object_unref (worker);
+        }
 
         g_main_loop_unref (wd.mainloop);
 

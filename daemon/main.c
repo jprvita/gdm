@@ -258,6 +258,7 @@ on_shutdown_signal_cb (gpointer user_data)
 {
         GMainLoop *mainloop = user_data;
 
+        g_debug ("GdmMain: SIGTERM or SIGINT received, stopping mainloop");
         g_main_loop_quit (mainloop);
 
         return FALSE;
@@ -403,7 +404,7 @@ main (int    argc,
 
         g_main_loop_run (main_loop);
 
-        g_debug ("GDM finished, cleaning up...");
+        g_debug ("GdmMain: GDM mainloop finished, cleaning up...");
 
         g_clear_object (&manager);
         g_clear_object (&settings);
@@ -420,6 +421,7 @@ main (int    argc,
                 g_printerr ("%s\n", error->message);
                 g_clear_error (&error);
         }
+        g_debug ("GdmMain: GDM finished -- at this point all children should be dead");
         return ret;
 }
 

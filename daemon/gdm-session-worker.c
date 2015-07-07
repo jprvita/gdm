@@ -3534,6 +3534,7 @@ gdm_session_worker_finalize (GObject *object)
 {
         GdmSessionWorker *worker;
 
+        g_debug ("gdm_session_worker_finalize()");
         g_return_if_fail (object != NULL);
         g_return_if_fail (GDM_IS_SESSION_WORKER (object));
 
@@ -3543,6 +3544,7 @@ gdm_session_worker_finalize (GObject *object)
 
         gdm_session_worker_unwatch_child (worker);
 
+        g_debug ("gdm_session_worker_finalize(): about to signal and wait %d", worker->priv->child_pid);
         if (worker->priv->child_pid > 0) {
                 gdm_signal_pid (worker->priv->child_pid, SIGTERM);
                 gdm_wait_on_pid (worker->priv->child_pid);
