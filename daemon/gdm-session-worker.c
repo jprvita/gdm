@@ -2935,6 +2935,15 @@ state_change_idle (GdmSessionWorker *worker)
 {
         int new_state;
 
+        struct sigaction oldact;
+        g_debug ("sesssion-worker state_change_idle: checking SIGTERM signal handler");
+        sigaction (SIGTERM, NULL, &oldact);
+        if (oldact.sa_handler != SIG_DFL) {
+            g_debug ("sesssion-worker state_change_idle: SIGTERM signal handler installed");
+        } else {
+            g_critical ("sesssion-worker state_change_idle: SIGTERM signal NOT handler installed");
+        }
+
         new_state = worker->priv->state + 1;
         g_debug ("GdmSessionWorker: attempting to change state to %s",
                  get_state_name (new_state));

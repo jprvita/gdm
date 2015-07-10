@@ -87,6 +87,7 @@ int
 main (int    argc,
       char **argv)
 {
+        struct sigaction oldact;
         GOptionContext   *context;
         struct worker_data wd;
         const char       *address;
@@ -138,9 +139,24 @@ main (int    argc,
         g_unix_signal_add (SIGINT, on_shutdown_signal_cb, &wd);
         g_unix_signal_add (SIGUSR1, on_sigusr1_cb, NULL);
 
+        g_debug ("sesssion-worker-main: checking SIGTERM signal handler");
+        sigaction (SIGTERM, NULL, &oldact);
+        if (oldact.sa_handler != SIG_DFL) {
+            g_debug ("sesssion-worker-main: SIGTERM signal handler installed");
+        } else {
+            g_critical ("sesssion-worker-main: SIGTERM signal NOT handler installed");
+        }
+
         g_debug ("session-worker-main: starting the mainloop");
         g_main_loop_run (wd.mainloop);
         g_debug ("session-worker-main: mainloop exited -- unref'ing worker");
+        g_debug ("sesssion-worker-main: checking SIGTERM signal handler");
+        sigaction (SIGTERM, NULL, &oldact);
+        if (oldact.sa_handler != SIG_DFL) {
+            g_debug ("sesssion-worker-main: SIGTERM signal handler installed");
+        } else {
+            g_critical ("sesssion-worker-main: SIGTERM signal NOT handler installed");
+        }
 
         if (worker != NULL) {
                 g_object_unref (worker);
