@@ -45,12 +45,21 @@
 
 static GdmSettings *settings = NULL;
 
+struct worker_data {
+        GMainLoop *mainloop;
+        GdmSessionWorker *worker;
+};
+
 static gboolean
 on_shutdown_signal_cb (gpointer user_data)
 {
-        GMainLoop *mainloop = user_data;
+        struct worker_data *wd = user_data;
 
-        g_main_loop_quit (mainloop);
+        if (wd->worker != NULL) {
+                g_object_unref (wd->worker);
+        }
+
+        g_main_loop_quit (wd->mainloop);
 
         return FALSE;
 }
@@ -77,9 +86,8 @@ int
 main (int    argc,
       char **argv)
 {
-        GMainLoop        *main_loop;
         GOptionContext   *context;
-        GdmSessionWorker *worker;
+        struct worker_data wd;
         const char       *address;
         gboolean          is_for_reauth;
         static GOptionEntry entries []   = {
@@ -121,21 +129,17 @@ main (int    argc,
 
         is_for_reauth = g_getenv ("GDM_SESSION_FOR_REAUTH") != NULL;
 
-        worker = gdm_session_worker_new (address, is_for_reauth);
+        wd.worker = gdm_session_worker_new (address, is_for_reauth);
 
-        main_loop = g_main_loop_new (NULL, FALSE);
+        wd.mainloop = g_main_loop_new (NULL, FALSE);
 
-        g_unix_signal_add (SIGTERM, on_shutdown_signal_cb, main_loop);
-        g_unix_signal_add (SIGINT, on_shutdown_signal_cb, main_loop);
+        g_unix_signal_add (SIGTERM, on_shutdown_signal_cb, &wd);
+        g_unix_signal_add (SIGINT, on_shutdown_signal_cb, &wd);
         g_unix_signal_add (SIGUSR1, on_sigusr1_cb, NULL);
 
-        g_main_loop_run (main_loop);
+        g_main_loop_run (wd.mainloop);
 
-        if (worker != NULL) {
-                g_object_unref (worker);
-        }
-
-        g_main_loop_unref (main_loop);
+        g_main_loop_unref (wd.mainloop);
 
         g_debug ("Worker finished");
 
